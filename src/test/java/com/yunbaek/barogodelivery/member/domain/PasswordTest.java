@@ -1,9 +1,5 @@
 package com.yunbaek.barogodelivery.member.domain;
 
-import static org.assertj.core.api.Assertions.*;
-
-import java.util.stream.Stream;
-
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -11,6 +7,10 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.junit.jupiter.params.provider.ValueSource;
+
+import java.util.stream.Stream;
+
+import static org.assertj.core.api.Assertions.*;
 
 @DisplayName("비밀번호 domain 테스트")
 class PasswordTest {
@@ -105,7 +105,8 @@ class PasswordTest {
 		Password password3 = Password.from("aA1!aA1!aA1!a");
 
 		// when & then
-		assertThat(password1.notEquals(password2)).isFalse();
+		// encoding 으로 인해 hash 값이 달라져 equals 가 false 가 나옴
+		assertThat(password1.notEquals(password2)).isTrue();
 		assertThat(password1.notEquals(password3)).isTrue();
 	}
 

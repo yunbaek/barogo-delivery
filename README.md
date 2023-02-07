@@ -35,7 +35,7 @@ content-type: application/json; charset=UTF-8
 accept: application/json
 
 {
-  "userId": "userId",
+  "loginId": "loginId",
   "password": "password",
   "name": "name"
 }
@@ -48,7 +48,7 @@ content-type: application/json; charset=UTF-8
 accept: application/json
 
 {
-  "userId": "userId",
+  "loginId": "loginId",
   "name": "name"
 }
 ```

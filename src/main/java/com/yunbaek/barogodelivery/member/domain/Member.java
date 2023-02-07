@@ -30,4 +30,16 @@ public class Member {
 		this.name = Name.from(name);
 		this.password = Password.from(password);
 	}
+
+	public long id() {
+		return id;
+	}
+
+	public String loginId() {
+		return loginId.value();
+	}
+
+	public String name() {
+		return name.value();
+	}
 }

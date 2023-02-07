@@ -1,5 +1,7 @@
 package com.yunbaek.barogodelivery.member.domain;
 
+import java.util.Objects;
+
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
@@ -21,5 +23,31 @@ public class LoginId {
 
 	public static LoginId from(String value) {
 		return new LoginId(value);
+	}
+
+	public String value() {
+		return value;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o)
+			return true;
+		if (o == null || getClass() != o.getClass())
+			return false;
+
+		LoginId loginId = (LoginId)o;
+
+		return Objects.equals(value, loginId.value);
+	}
+
+	@Override
+	public int hashCode() {
+		return value != null ? value.hashCode() : 0;
+	}
+
+	@Override
+	public String toString() {
+		return value;
 	}
 }

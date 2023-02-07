@@ -23,7 +23,7 @@ public class MemberService {
 	public MemberResponse createMember(MemberRequest request) {
 		validateDuplicateLoginId(loginId(request));
 		Member member = memberRepository.save(request.toMember());
-		return MemberResponse.of(member);
+		return MemberResponse.from(member);
 	}
 
 	private LoginId loginId(MemberRequest request) {

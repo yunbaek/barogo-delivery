@@ -13,12 +13,16 @@ public class MemberResponse {
 		this.loginId = loginId;
 		this.name = name;
 	}
-	public static MemberResponse of(Member member) {
+	public static MemberResponse from(Member member) {
 		return new MemberResponse(member.id(), member.loginId(), member.name());
 	}
 
 	public long getId() {
 		return id;
+	}
+
+	public String getLoginId() {
+		return loginId;
 	}
 
 	public String getName() {

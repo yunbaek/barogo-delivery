@@ -3,6 +3,7 @@ package com.yunbaek.barogodelivery.member.domain;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.util.Assert;
 
 @Embeddable
@@ -25,11 +26,15 @@ public class Password {
 	private Password(String value) {
 		Assert.hasText(value, "password must not be null");
 		Assert.isTrue(isPasswordFormat(value), INVALID_PASSWORD_MESSAGE);
-		this.value = value;
+		this.value = encode(value);
 	}
 
 	public static Password from(String value) {
 		return new Password(value);
+	}
+
+	private String encode(String value) {
+		return new BCryptPasswordEncoder().encode(value);
 	}
 
 	private boolean isPasswordFormat(String password) {

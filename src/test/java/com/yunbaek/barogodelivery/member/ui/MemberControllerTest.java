@@ -11,12 +11,16 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.http.MediaType;
+import org.springframework.restdocs.RestDocumentationContextProvider;
+import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -27,15 +31,22 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @DisplayName("사용자는 ")
 @Nested
+@AutoConfigureRestDocs
 @WebMvcTest(controllers = MemberController.class,
         excludeFilters = {
                 @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = WebMvcConfigurer.class)})
+@ExtendWith({RestDocumentationExtension.class})
 class MemberControllerTest {
 
     @MockBean
@@ -51,9 +62,10 @@ class MemberControllerTest {
     WebApplicationContext webApplicationContext;
 
     @BeforeEach()
-    public void setup() {
+    public void setup(RestDocumentationContextProvider restDocumentationContextProvider) {
         this.mockMvc = MockMvcBuilders
                 .webAppContextSetup(webApplicationContext)
+                .apply(documentationConfiguration(restDocumentationContextProvider))
                 .addFilters(new CharacterEncodingFilter("UTF-8", true)) // 필터
                 .build();
     }
@@ -82,6 +94,17 @@ class MemberControllerTest {
                 .getContentAsString();
 
         assertThat(body).isEqualTo(mapAsString(MemberResponse.from(member)));
+
+        // docs
+        perform.andDo(document("members",
+                preprocessRequest(prettyPrint()),
+                preprocessResponse(prettyPrint()),
+                responseFields(
+                        fieldWithPath("id").description("회원 고유번호"),
+                        fieldWithPath("loginId").description("로그인 아이디"),
+                        fieldWithPath("name").description("이름")
+                ))
+        );
     }
 
     @DisplayName("로그인 아이디가 중복되면 회원 가입을 할 수 없다.")

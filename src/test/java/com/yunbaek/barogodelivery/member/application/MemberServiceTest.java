@@ -1,9 +1,9 @@
 package com.yunbaek.barogodelivery.member.application;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.BDDMockito.*;
-
+import com.yunbaek.barogodelivery.common.exception.DuplicateDataException;
+import com.yunbaek.barogodelivery.member.domain.Member;
+import com.yunbaek.barogodelivery.member.domain.MemberRepository;
+import com.yunbaek.barogodelivery.member.dto.MemberRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -11,9 +11,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.yunbaek.barogodelivery.member.domain.Member;
-import com.yunbaek.barogodelivery.member.domain.MemberRepository;
-import com.yunbaek.barogodelivery.member.dto.MemberRequest;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.*;
 
 @DisplayName("회원 서비스 테스트")
 @ExtendWith(MockitoExtension.class)
@@ -54,8 +54,9 @@ class MemberServiceTest {
 		given(memberRepository.existsByLoginId(any())).willReturn(true);
 
 		// when & then
-		assertThatIllegalArgumentException().
-			isThrownBy(() -> memberService.createMember(request));
+		assertThatThrownBy(() -> memberService.createMember(request))
+				.isInstanceOf(DuplicateDataException.class)
+						.hasMessageContaining("이미 존재하는 아이디입니다.");
 	}
 
 }

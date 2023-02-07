@@ -3,8 +3,9 @@ package com.yunbaek.barogodelivery.member.domain;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.util.Assert;
+
+import com.yunbaek.barogodelivery.common.utils.PasswordEncoder;
 
 @Embeddable
 public class Password {
@@ -34,7 +35,7 @@ public class Password {
 	}
 
 	private String encode(String value) {
-		return new BCryptPasswordEncoder().encode(value);
+		return PasswordEncoder.encode(value);
 	}
 
 	private boolean isPasswordFormat(String password) {

@@ -1,12 +1,15 @@
 package com.yunbaek.barogodelivery.member.ui;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.yunbaek.barogodelivery.common.exception.DuplicateDataException;
-import com.yunbaek.barogodelivery.member.application.MemberService;
-import com.yunbaek.barogodelivery.member.domain.Member;
-import com.yunbaek.barogodelivery.member.dto.MemberRequest;
-import com.yunbaek.barogodelivery.member.dto.MemberResponse;
+import static org.assertj.core.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.BDDMockito.*;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.*;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -28,17 +31,13 @@ import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
-import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
-import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
-import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
-import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.yunbaek.barogodelivery.common.exception.DuplicateDataException;
+import com.yunbaek.barogodelivery.member.application.MemberService;
+import com.yunbaek.barogodelivery.member.domain.Member;
+import com.yunbaek.barogodelivery.member.dto.MemberRequest;
+import com.yunbaek.barogodelivery.member.dto.MemberResponse;
 
 @DisplayName("사용자는 ")
 @Nested
@@ -81,7 +80,6 @@ class MemberControllerTest {
 
         // when
         ResultActions perform = mockMvc.perform(post("/api/v1/members/")
-                .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.ALL)
                 .content(mapAsString(request)));

@@ -1,0 +1,61 @@
+package com.yunbaek.barogodelivery.member.application;
+
+import static org.assertj.core.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.BDDMockito.*;
+
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import com.yunbaek.barogodelivery.member.domain.Member;
+import com.yunbaek.barogodelivery.member.domain.MemberRepository;
+import com.yunbaek.barogodelivery.member.dto.MemberRequest;
+
+@DisplayName("회원 서비스 테스트")
+@ExtendWith(MockitoExtension.class)
+class MemberServiceTest {
+
+	@Mock
+	private MemberRepository memberRepository;
+
+	@InjectMocks
+	private MemberService memberService;
+
+	@DisplayName("회원을 생성할 수 있다.")
+	@Test
+	void createMemberTest() {
+		// given
+		String loginId = "loginId";
+		String test = "test";
+		String password = "abcABC!@#123";
+		MemberRequest request = new MemberRequest(loginId, test, password);
+		given(memberRepository.save(any())).willReturn(new Member(loginId, test, password));
+
+		// when
+		memberService.createMember(request);
+
+		// then
+		verify(memberRepository, times(1)).save(any());
+		verify(memberRepository, times(1)).existsByLoginId(any());
+	}
+
+	@DisplayName("중복된 아이디로 회원 생성 시도 시 예외가 발생한다.")
+	@Test
+	void createMemberWithDuplicateLoginIdTest() {
+		// given
+		String loginId = "loginId";
+		String test = "test";
+		String password = "abcABC!@#123";
+		MemberRequest request = new MemberRequest(loginId, test, password);
+		given(memberRepository.existsByLoginId(any())).willReturn(true);
+
+		// when & then
+		assertThatIllegalArgumentException().
+			isThrownBy(() -> memberService.createMember(request));
+	}
+
+}

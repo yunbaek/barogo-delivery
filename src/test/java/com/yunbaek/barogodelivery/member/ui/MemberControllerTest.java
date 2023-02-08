@@ -97,6 +97,11 @@ class MemberControllerTest {
         perform.andDo(document("members",
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint()),
+                requestFields(
+                        fieldWithPath("loginId").description("로그인 아이디"),
+                        fieldWithPath("name").description("이름"),
+                        fieldWithPath("password").description("비밀번호")
+                ),
                 responseFields(
                         fieldWithPath("id").description("회원 고유번호"),
                         fieldWithPath("loginId").description("로그인 아이디"),

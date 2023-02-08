@@ -1,0 +1,19 @@
+ifndef::snippets[]
+:snippets: ./build/generated-snippets
+endif::[]
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 4
+
+== Auth
+=== 로그인
+==== Request
+include::{snippets}/auth/http-request.adoc[]
+==== Response
+include::{snippets}/auth/http-response.adoc[]
+==== Request Fields
+include::{snippets}/auth/request-fields.adoc[]
+==== Response Fields
+include::{snippets}/auth/response-fields.adoc[]

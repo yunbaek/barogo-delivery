@@ -15,6 +15,7 @@ spring:
     properties:
       hibernate:
         format_sql: true
+    open-in-view: false
 
   logging:
     level:
@@ -24,7 +25,8 @@ spring:
     console:
       enabled: true
 
-  security:
-    jwt:
-      secret: eyJhbGciOiJIUzI1NiJ9.eyJSb2xlIjoiQWRtaW4iLCJJc3N1ZXIiOiJib3JhZ28tZGVsaXZlcnkiLCJVc2VybmFtZSI6ImJvcmFnbyIsImlhdCI6MTY3NTgzMDE4Mn0.TONtRLjuek1awn4ORIEdLj55wGTGJcnBlJ3xpYZ0QY8
-      expiration_time: 3600000
+security:
+  jwt:
+    token:
+      secret-key: eyJhbGciOiJIUzI1NiJ9.eyJSb2xlIjoiQWRtaW4iLCJJc3N1ZXIiOiJib3JhZ28tZGVsaXZlcnkiLCJVc2VybmFtZSI6ImJvcmFnbyIsImlhdCI6MTY3NTgzMDE4Mn0.TONtRLjuek1awn4ORIEdLj55wGTGJcnBlJ3xpYZ0QY8
+      expire-length: 3600000

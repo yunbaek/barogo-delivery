@@ -23,3 +23,8 @@ spring:
   h2:
     console:
       enabled: true
+
+  security:
+    jwt:
+      secret: eyJhbGciOiJIUzI1NiJ9.eyJSb2xlIjoiQWRtaW4iLCJJc3N1ZXIiOiJib3JhZ28tZGVsaXZlcnkiLCJVc2VybmFtZSI6ImJvcmFnbyIsImlhdCI6MTY3NTgzMDE4Mn0.TONtRLjuek1awn4ORIEdLj55wGTGJcnBlJ3xpYZ0QY8
+      expiration_time: 3600000

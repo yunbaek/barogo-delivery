@@ -20,7 +20,7 @@ public class SecurityConfig {
 			.and()
 			.authorizeRequests()
 			.antMatchers("/api/v1/members").permitAll()
-			.antMatchers("/api/v1/auth/login").permitAll()
+			.antMatchers("/login/token").permitAll()
 			.anyRequest().authenticated();
 
 		return http.build();

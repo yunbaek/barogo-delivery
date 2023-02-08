@@ -1,5 +1,7 @@
 package com.yunbaek.barogodelivery.member.domain;
 
+import java.util.Objects;
+
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
@@ -58,8 +60,25 @@ public class Password {
 		return count >= MINIMUM_MATCH_NUMBER;
 	}
 
-	public boolean notEquals(Password password) {
-		return !this.value.equals(password.value);
+	public boolean match(String rawPassword) {
+		return PasswordEncoder.matches(rawPassword, this.value);
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o)
+			return true;
+		if (o == null || getClass() != o.getClass())
+			return false;
+
+		Password password = (Password)o;
+
+		return Objects.equals(value, password.value);
+	}
+
+	@Override
+	public int hashCode() {
+		return value != null ? value.hashCode() : 0;
 	}
 
 	@Override

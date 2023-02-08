@@ -1,5 +1,9 @@
 package com.yunbaek.barogodelivery.member.domain;
 
+import static org.assertj.core.api.Assertions.*;
+
+import java.util.stream.Stream;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -7,10 +11,6 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.junit.jupiter.params.provider.ValueSource;
-
-import java.util.stream.Stream;
-
-import static org.assertj.core.api.Assertions.*;
 
 @DisplayName("비밀번호 domain 테스트")
 class PasswordTest {
@@ -95,19 +95,16 @@ class PasswordTest {
 			));
 	}
 
-	@DisplayName("비밀번호 불일치 확인 테스트")
+	@DisplayName("비밀번호 일치 확인 테스트")
 	@ParameterizedTest
 	@ValueSource(strings = {"aA1!aA1!aA1!", "passWord123123", "PASSword!@#123"})
-	void notEqualsTest(String password) {
+	void notEqualsTest(String rawPassword) {
 		// given
-		Password password1 = Password.from(password);
-		Password password2 = Password.from(password);
-		Password password3 = Password.from("aA1!aA1!aA1!a");
+		Password password = Password.from(rawPassword);
 
 		// when & then
-		// encoding 으로 인해 hash 값이 달라져 equals 가 false 가 나옴
-		assertThat(password1.notEquals(password2)).isTrue();
-		assertThat(password1.notEquals(password3)).isTrue();
+		assertThat(password.match(rawPassword)).isTrue();
+		assertThat(password.match(rawPassword + "1")).isFalse();
 	}
 
 }

@@ -35,3 +35,6 @@ out/
 
 ### VS Code ###
 .vscode/
+
+### Rest Docs ###
+/BOOT-INF/

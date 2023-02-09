@@ -1,10 +1,22 @@
 package com.yunbaek.barogodelivery.auth.infrastructure;
 
-import io.jsonwebtoken.*;
+import java.util.Date;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
-import java.util.Date;
+import com.yunbaek.barogodelivery.auth.application.CustomUserDetailService;
+
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
+import io.jsonwebtoken.JwtException;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 
 @Component
 public class JwtTokenProvider implements TokenProvider<String, String> {
@@ -14,6 +26,12 @@ public class JwtTokenProvider implements TokenProvider<String, String> {
 
 	@Value("${security.jwt.token.expire-length}")
 	private long validityInMilliseconds;
+
+	private final CustomUserDetailService userDetailService;
+
+	public JwtTokenProvider(CustomUserDetailService userDetailService) {
+		this.userDetailService = userDetailService;
+	}
 
 	@Override
 	public String createToken(String payload) {
@@ -41,5 +59,14 @@ public class JwtTokenProvider implements TokenProvider<String, String> {
 		} catch (JwtException | IllegalArgumentException e) {
 			return false;
 		}
+	}
+
+	public Authentication getAuthentication(String token) {
+		UserDetails user = userDetailService.loadUserByUsername(getPayload(token));
+		return new UsernamePasswordAuthenticationToken(user, "", user.getAuthorities());
+	}
+
+	public String extractToken(HttpServletRequest request) {
+		return AuthorizationExtractor.extract(request);
 	}
 }

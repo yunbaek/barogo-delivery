@@ -21,6 +21,7 @@ public class SecurityConfig {
 			.authorizeRequests()
 			.antMatchers("/api/v1/members").permitAll()
 			.antMatchers("/login/token").permitAll()
+			.antMatchers("/docs/**").permitAll()
 			.anyRequest().authenticated();
 
 		return http.build();

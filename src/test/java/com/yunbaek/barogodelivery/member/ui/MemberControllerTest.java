@@ -1,99 +1,53 @@
 package com.yunbaek.barogodelivery.member.ui;
 
+import static com.yunbaek.barogodelivery.utils.RestAssertUtils.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.*;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.FilterType;
-import org.springframework.http.MediaType;
-import org.springframework.restdocs.RestDocumentationContextProvider;
-import org.springframework.restdocs.RestDocumentationExtension;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.context.WebApplicationContext;
-import org.springframework.web.filter.CharacterEncodingFilter;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yunbaek.barogodelivery.common.exception.DuplicateDataException;
-import com.yunbaek.barogodelivery.member.application.MemberService;
 import com.yunbaek.barogodelivery.member.domain.Member;
 import com.yunbaek.barogodelivery.member.dto.MemberRequest;
 import com.yunbaek.barogodelivery.member.dto.MemberResponse;
+import com.yunbaek.barogodelivery.utils.ControllerTest;
 
 @DisplayName("사용자는 ")
 @Nested
-@AutoConfigureRestDocs
-@WebMvcTest(controllers = MemberController.class,
-        excludeFilters = {
-                @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = WebMvcConfigurer.class)})
-@ExtendWith({RestDocumentationExtension.class})
-class MemberControllerTest {
+class MemberControllerTest extends ControllerTest {
 
-    @MockBean
-    private MemberService memberService;
-
-    @Autowired
-    private MockMvc mockMvc;
-
-    @Autowired
-    private ObjectMapper mapper;
-
-    @Autowired
-    WebApplicationContext webApplicationContext;
-
-    @BeforeEach()
-    public void setup(RestDocumentationContextProvider restDocumentationContextProvider) {
-        this.mockMvc = MockMvcBuilders
-                .webAppContextSetup(webApplicationContext)
-                .apply(documentationConfiguration(restDocumentationContextProvider))
-                .addFilters(new CharacterEncodingFilter("UTF-8", true)) // 필터
-                .build();
-    }
+    private static final String MEMBERS_URI = "/api/v1/members/";
 
     @DisplayName("회원 가입을 할 수 있다.")
     @Test
     void createMemberSuccessTest() throws Exception {
         // given
         MemberRequest request = new MemberRequest("loginId", "test", "abcABC!@#123");
-        Member member = new Member("loginId", "test", "abcABC!@#123");
-        given(memberService.createMember(any(MemberRequest.class)))
-                .willReturn(MemberResponse.from(member));
+        MemberResponse response = MemberResponse.from(new Member("loginId", "test", "abcABC!@#123"));
+        given(memberService.createMember(any(MemberRequest.class))).willReturn(response);
 
         // when
-        ResultActions perform = mockMvc.perform(post("/api/v1/members/")
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.ALL)
-                .content(mapAsString(request)));
+        ResultActions perform = doPost(mockMvc, MEMBERS_URI, request);
 
         // then
-        String body = perform
-                .andExpect(status().isCreated())
-                .andReturn()
-                .getResponse()
-                .getContentAsString();
-
-        assertThat(body).isEqualTo(mapAsString(MemberResponse.from(member)));
+        perform.andExpect(status().isCreated());
+        String body = extractResponse(perform);
+        assertThat(body).isEqualTo(mapAsString(response));
 
         // docs
+        createRestDocs(perform);
+    }
+
+    private void createRestDocs(ResultActions perform) throws Exception {
         perform.andDo(document("members",
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint()),
@@ -120,19 +74,11 @@ class MemberControllerTest {
                 .willThrow(new DuplicateDataException(errorMessage));
 
         // when
-        ResultActions perform = mockMvc.perform(post("/api/v1/members/")
-                .with(csrf())
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.ALL)
-                .content(mapAsString(request)));
+        ResultActions perform = doPost(mockMvc, MEMBERS_URI, request);
 
         // then
-        String body = perform
-                .andExpect(status().isBadRequest())
-                .andReturn()
-                .getResponse()
-                .getContentAsString();
-
+        perform.andExpect(status().isBadRequest());
+        String body = extractResponse(perform);
         assertThat(body).isEqualTo(errorMessage);
     }
 
@@ -145,18 +91,10 @@ class MemberControllerTest {
                 .willThrow(new IllegalArgumentException());
 
         // when
-        ResultActions perform = mockMvc.perform(post("/api/v1/members/")
-                .with(csrf())
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.ALL)
-                .content(mapAsString(request)));
+        ResultActions perform = doPost(mockMvc, MEMBERS_URI, request);
 
         // then
-        perform
-                .andExpect(status().isBadRequest())
-                .andReturn()
-                .getResponse()
-                .getContentAsString();
+        perform.andExpect(status().isBadRequest());
     }
 
     private <T> String mapAsString(T request) throws JsonProcessingException {

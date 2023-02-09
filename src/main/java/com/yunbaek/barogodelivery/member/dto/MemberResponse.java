@@ -14,7 +14,7 @@ public class MemberResponse {
 		this.name = name;
 	}
 	public static MemberResponse from(Member member) {
-		return new MemberResponse(member.id(), member.loginId(), member.name());
+		return new MemberResponse(member.id(), member.loginId().value(), member.name().value());
 	}
 
 	public long getId() {

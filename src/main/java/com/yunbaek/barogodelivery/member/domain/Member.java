@@ -37,12 +37,16 @@ public class Member extends BaseEntity {
 		return id;
 	}
 
-	public String loginId() {
-		return loginId.value();
+	public LoginId loginId() {
+		return loginId;
 	}
 
-	public String name() {
-		return name.value();
+	public Password password() {
+		return password;
+	}
+
+	public Name name() {
+		return name;
 	}
 
 	public boolean matchPassword(String password) {

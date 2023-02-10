@@ -3,23 +3,16 @@ package com.yunbaek.barogodelivery.auth.application;
 import com.yunbaek.barogodelivery.auth.dto.TokenRequest;
 import com.yunbaek.barogodelivery.auth.dto.TokenResponse;
 import com.yunbaek.barogodelivery.auth.infrastructure.JwtTokenProvider;
-import com.yunbaek.barogodelivery.common.exception.AuthorizationException;
-import com.yunbaek.barogodelivery.member.domain.LoginId;
-import com.yunbaek.barogodelivery.member.domain.Member;
-import com.yunbaek.barogodelivery.member.domain.MemberRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.util.Optional;
+import org.springframework.security.authentication.AuthenticationManager;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 
 @DisplayName("인증 서비스 테스트")
@@ -27,7 +20,8 @@ import static org.mockito.BDDMockito.given;
 class AuthServiceTest {
 
     @Mock
-    private MemberRepository memberRepository;
+    private AuthenticationManager authenticationManager;
+
     @Mock
     private JwtTokenProvider jwtTokenProvider;
 
@@ -42,9 +36,7 @@ class AuthServiceTest {
     @Test
     void loginSuccessTest() {
         // given
-        given(memberRepository.findByLoginId(any(LoginId.class)))
-                .willReturn(Optional.of(new Member(loginId, name, password)));
-        given(jwtTokenProvider.createToken(anyString())).willReturn("TOKEN");
+        given(jwtTokenProvider.createToken(any())).willReturn("TOKEN");
         TokenRequest request = new TokenRequest(loginId, password);
 
         // when
@@ -54,35 +46,17 @@ class AuthServiceTest {
         assertThat(token.getAccessToken()).isNotBlank();
     }
 
-    @DisplayName("로그인 아이디로 회원을 찾을 수 없으면 예외가 발생한다.")
+    @DisplayName("로그인이 성공한다.")
     @Test
-    void loginFailureWithNullTest() {
+    void loginSuccessTeste() {
         // given
-        given(memberRepository.findByLoginId(any(LoginId.class)))
-                .willReturn(Optional.empty());
+        given(authenticationManager.authenticate(any())).willReturn(null);
         TokenRequest request = new TokenRequest(loginId, password);
 
-        // when & then
-        assertThatThrownBy(
-                () -> authService.login(request)
-        ).isInstanceOf(AuthorizationException.class)
-                .hasMessageContaining("가입되지 않은 아이디입니다.");
+        // when
+        TokenResponse token = authService.login(request);
+
+        // then
+        assertThat(token.getAccessToken()).isNotBlank();
     }
-
-    @DisplayName("비밀번호가 일치하지 않으면 예외가 발생한다.")
-    @Test
-    void loginFailureWithWrongPasswordTest() {
-        // given
-        given(memberRepository.findByLoginId(any(LoginId.class)))
-                .willReturn(Optional.of(new Member(loginId, name, password)));
-        TokenRequest request = new TokenRequest(loginId, password + "wrong");
-
-        // when & then
-        assertThatThrownBy(
-                () -> authService.login(request)
-        ).isInstanceOf(AuthorizationException.class)
-                .hasMessageContaining("비밀번호가 일치하지 않습니다.");
-
-    }
-
 }

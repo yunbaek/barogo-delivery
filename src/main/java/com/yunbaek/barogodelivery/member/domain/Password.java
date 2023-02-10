@@ -1,13 +1,11 @@
 package com.yunbaek.barogodelivery.member.domain;
 
-import java.util.Objects;
+import com.yunbaek.barogodelivery.common.utils.PasswordEncoder;
+import org.springframework.util.Assert;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
-
-import org.springframework.util.Assert;
-
-import com.yunbaek.barogodelivery.common.utils.PasswordEncoder;
+import java.util.Objects;
 
 @Embeddable
 public class Password {
@@ -29,7 +27,7 @@ public class Password {
 	private Password(String value) {
 		Assert.hasText(value, "password must not be null");
 		Assert.isTrue(isPasswordFormat(value), INVALID_PASSWORD_MESSAGE);
-		this.value = encode(value);
+		this.value = value;
 	}
 
 	public static Password from(String value) {
@@ -58,10 +56,6 @@ public class Password {
 			}
 		}
 		return count >= MINIMUM_MATCH_NUMBER;
-	}
-
-	public boolean match(String rawPassword) {
-		return PasswordEncoder.matches(rawPassword, this.value);
 	}
 
 	@Override

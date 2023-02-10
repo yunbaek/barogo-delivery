@@ -1,16 +1,16 @@
 package com.yunbaek.barogodelivery.member.domain;
 
-import static org.assertj.core.api.Assertions.*;
-
-import java.util.stream.Stream;
-
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
-import org.junit.jupiter.params.provider.ValueSource;
+
+import java.util.stream.Stream;
+
+import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 
 @DisplayName("비밀번호 domain 테스트")
 class PasswordTest {
@@ -94,17 +94,4 @@ class PasswordTest {
 			Arguments.of("대문자, 숫자, 특수문자 포함", "A1!A1!A1!A1!"
 			));
 	}
-
-	@DisplayName("비밀번호 일치 확인 테스트")
-	@ParameterizedTest
-	@ValueSource(strings = {"aA1!aA1!aA1!", "passWord123123", "PASSword!@#123"})
-	void notEqualsTest(String rawPassword) {
-		// given
-		Password password = Password.from(rawPassword);
-
-		// when & then
-		assertThat(password.match(rawPassword)).isTrue();
-		assertThat(password.match(rawPassword + "1")).isFalse();
-	}
-
 }

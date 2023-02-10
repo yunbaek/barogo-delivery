@@ -2,6 +2,7 @@ package com.yunbaek.barogodelivery.member.dto;
 
 import com.yunbaek.barogodelivery.member.domain.Member;
 import lombok.Data;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Data
 public class MemberRequest {
@@ -21,5 +22,9 @@ public class MemberRequest {
 
 	public Member toMember() {
 		return new Member(loginId, name, password);
+	}
+
+	public void encodePassword(PasswordEncoder passwordEncoder) {
+		this.password = passwordEncoder.encode(password);
 	}
 }

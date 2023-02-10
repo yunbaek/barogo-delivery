@@ -1,12 +1,8 @@
 package com.yunbaek.barogodelivery.member.domain;
 
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-
 import com.yunbaek.barogodelivery.common.domain.BaseEntity;
+
+import javax.persistence.*;
 
 @Entity
 public class Member extends BaseEntity {
@@ -49,7 +45,4 @@ public class Member extends BaseEntity {
 		return name;
 	}
 
-	public boolean matchPassword(String password) {
-		return this.password.match(password);
-	}
 }

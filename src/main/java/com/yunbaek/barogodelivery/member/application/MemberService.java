@@ -6,6 +6,7 @@ import com.yunbaek.barogodelivery.member.domain.Member;
 import com.yunbaek.barogodelivery.member.domain.MemberRepository;
 import com.yunbaek.barogodelivery.member.dto.MemberRequest;
 import com.yunbaek.barogodelivery.member.dto.MemberResponse;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,14 +15,17 @@ public class MemberService {
 
 	private static final String DUPLICATE_MEMBER_MESSAGE_FORMAT = "이미 존재하는 아이디입니다. | loginId: %s";
 	private final MemberRepository memberRepository;
+	private final PasswordEncoder passwordEncoder;
 
-	public MemberService(MemberRepository memberRepository) {
+	public MemberService(MemberRepository memberRepository, PasswordEncoder passwordEncoder) {
 		this.memberRepository = memberRepository;
+		this.passwordEncoder = passwordEncoder;
 	}
 
 	@Transactional
 	public MemberResponse createMember(MemberRequest request) {
 		validateDuplicateLoginId(loginId(request));
+		request.encodePassword(passwordEncoder);
 		Member member = memberRepository.save(request.toMember());
 		return MemberResponse.from(member);
 	}

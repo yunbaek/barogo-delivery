@@ -1,6 +1,5 @@
 package com.yunbaek.barogodelivery.member.domain;
 
-import com.yunbaek.barogodelivery.common.utils.PasswordEncoder;
 import org.springframework.util.Assert;
 
 import javax.persistence.Column;
@@ -32,10 +31,6 @@ public class Password {
 
 	public static Password from(String value) {
 		return new Password(value);
-	}
-
-	private String encode(String value) {
-		return PasswordEncoder.encode(value);
 	}
 
 	private boolean isPasswordFormat(String password) {

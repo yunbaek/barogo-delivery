@@ -44,5 +44,4 @@ public class Member extends BaseEntity {
 	public Name name() {
 		return name;
 	}
-
 }

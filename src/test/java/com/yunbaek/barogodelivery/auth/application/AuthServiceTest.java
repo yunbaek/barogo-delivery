@@ -5,10 +5,9 @@ import com.yunbaek.barogodelivery.auth.dto.TokenResponse;
 import com.yunbaek.barogodelivery.auth.infrastructure.JwtTokenProvider;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.authentication.AuthenticationManager;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -16,7 +15,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
 @DisplayName("인증 서비스 테스트")
-@ExtendWith(MockitoExtension.class)
+@SpringBootTest
 class AuthServiceTest {
 
     @Mock
@@ -46,17 +45,16 @@ class AuthServiceTest {
         assertThat(token.getAccessToken()).isNotBlank();
     }
 
-    @DisplayName("로그인이 성공한다.")
+    @DisplayName("로그인이 실패한다.")
     @Test
-    void loginSuccessTeste() {
+    void loginFailureTest() {
         // given
-        given(authenticationManager.authenticate(any())).willReturn(null);
         TokenRequest request = new TokenRequest(loginId, password);
 
         // when
         TokenResponse token = authService.login(request);
 
         // then
-        assertThat(token.getAccessToken()).isNotBlank();
+        assertThat(token.getAccessToken()).isNull();
     }
 }

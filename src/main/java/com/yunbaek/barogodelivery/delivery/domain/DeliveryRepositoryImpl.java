@@ -23,17 +23,15 @@ public class DeliveryRepositoryImpl implements DeliveryRepositoryCustom {
 
     @Override
     public List<DeliveryResponse> findByMemberId(long memberId, DeliverySearchDto searchDto) {
-        LocalDate today = LocalDate.now();
-        LocalDateTime startOfToday = today.atStartOfDay();
         JPAQuery<?> query = queryFactory.from(delivery)
                 .where(
                         ltDeliveryId(searchDto.getLastDeliveryId()),
                         delivery.memberId.eq(memberId),
-                        delivery.createdDate.between(startOfToday, LocalDateTime.now())
+                        betweenDate(searchDto.getFirstDate(), searchDto.getLastDate())
                 )
                 .orderBy(delivery.id.desc())
                 .limit(searchDto.getSize());
-        
+
         return query.select(Projections.constructor(DeliveryResponse.class,
                 delivery.id.as("deliveryId"),
                 delivery.memberId,
@@ -59,5 +57,16 @@ public class DeliveryRepositoryImpl implements DeliveryRepositoryCustom {
         }
 
         return delivery.id.lt(deliveryId);
+    }
+
+    private BooleanExpression betweenDate(LocalDate start, LocalDate end) {
+        if (start == null || end == null) {
+            LocalDate today = LocalDate.now();
+            LocalDateTime startOfToday = today.atStartOfDay();
+            return delivery.createdDate.between(startOfToday, LocalDateTime.now());
+        }
+        LocalDateTime endOfEndDay = end.atStartOfDay().plusDays(1).minusSeconds(1L);
+        LocalDateTime startOfStartDat = start.atStartOfDay();
+        return delivery.createdDate.between(startOfStartDat, endOfEndDay);
     }
 }

@@ -15,15 +15,14 @@ spring:
     properties:
       hibernate:
         format_sql: true
+        default_batch_fetch_size: 1000
     open-in-view: false
+    defer-datasource-initialization: false
 
-  logging:
-    level:
-      org.hibernate.SQL: debug
-      org.hibernate.type: trace
-  h2:
-    console:
-      enabled: true
+logging:
+  level:
+    org.hibernate.SQL: debug
+    org.hibernate.type: trace
 
 security:
   jwt:

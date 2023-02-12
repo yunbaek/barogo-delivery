@@ -27,7 +27,7 @@ public class Delivery extends BaseEntity {
     @AttributeOverride(name = "city", column = @Column(name = "arrival_city"))
     @AttributeOverride(name = "street", column = @Column(name = "arrival_street"))
     @AttributeOverride(name = "detail", column = @Column(name = "arrival_detail"))
-    private Address arrivalLocation;
+    private Address arrivalAddress;
 
     @Embedded
     @AttributeOverride(name = "zipCode", column = @Column(name = "departure_zip_code"))
@@ -35,18 +35,18 @@ public class Delivery extends BaseEntity {
     @AttributeOverride(name = "city", column = @Column(name = "departure_city"))
     @AttributeOverride(name = "street", column = @Column(name = "departure_street"))
     @AttributeOverride(name = "detail", column = @Column(name = "departure_detail"))
-    private Address departureLocation;
+    private Address departureAddress;
 
 
     protected Delivery() {
     }
 
-    private Delivery(long riderId, long orderId, long memberId, Address arrivalLocation, Address departureLocation) {
+    private Delivery(long riderId, long orderId, long memberId, Address arrivalAddress, Address departureAddress) {
         this.riderId = riderId;
         this.orderId = orderId;
         this.memberId = memberId;
-        this.arrivalLocation = arrivalLocation;
-        this.departureLocation = departureLocation;
+        this.arrivalAddress = arrivalAddress;
+        this.departureAddress = departureAddress;
         this.status = DeliveryStatus.ORDERED;
     }
 
@@ -90,8 +90,8 @@ public class Delivery extends BaseEntity {
                 ", orderId=" + orderId +
                 ", memberId=" + memberId +
                 ", status=" + status +
-                ", arrivalLocation=" + arrivalLocation +
-                ", departureLocation=" + departureLocation +
+                ", arrivalLocation=" + arrivalAddress +
+                ", departureLocation=" + departureAddress +
                 '}';
     }
 }

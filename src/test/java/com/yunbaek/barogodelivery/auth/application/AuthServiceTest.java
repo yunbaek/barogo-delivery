@@ -3,11 +3,13 @@ package com.yunbaek.barogodelivery.auth.application;
 import com.yunbaek.barogodelivery.auth.dto.TokenRequest;
 import com.yunbaek.barogodelivery.auth.dto.TokenResponse;
 import com.yunbaek.barogodelivery.auth.infrastructure.JwtTokenProvider;
+import com.yunbaek.barogodelivery.config.QueryDslConfig;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.security.authentication.AuthenticationManager;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -16,6 +18,7 @@ import static org.mockito.BDDMockito.given;
 
 @DisplayName("인증 서비스 테스트")
 @SpringBootTest
+@Import(QueryDslConfig.class)
 class AuthServiceTest {
 
     @Mock

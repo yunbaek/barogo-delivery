@@ -1,17 +1,17 @@
 package com.yunbaek.barogodelivery.member.domain;
 
-import static org.assertj.core.api.Assertions.*;
-
+import com.yunbaek.barogodelivery.config.JpaAuditConfig;
+import com.yunbaek.barogodelivery.config.QueryDslConfig;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 
-import com.yunbaek.barogodelivery.config.JpaAuditConfig;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
-@Import(JpaAuditConfig.class)
+@Import({JpaAuditConfig.class, QueryDslConfig.class})
 class MemberRepositoryTest {
 
 	@Autowired

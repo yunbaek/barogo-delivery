@@ -10,6 +10,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
@@ -21,6 +22,9 @@ class MemberServiceTest {
 
 	@Mock
 	private MemberRepository memberRepository;
+
+	@Mock
+	private PasswordEncoder passwordEncoder;
 
 	@InjectMocks
 	private MemberService memberService;
@@ -34,6 +38,7 @@ class MemberServiceTest {
 		String password = "abcABC!@#123";
 		MemberRequest request = new MemberRequest(loginId, test, password);
 		given(memberRepository.save(any())).willReturn(new Member(loginId, test, password));
+		given(passwordEncoder.encode(password)).willReturn(password);
 
 		// when
 		memberService.createMember(request);

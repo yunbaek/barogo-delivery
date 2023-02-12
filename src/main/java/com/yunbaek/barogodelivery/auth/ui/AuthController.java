@@ -20,6 +20,7 @@ public class AuthController {
         this.authService = authService;
     }
 
+    // TODO: 로그인 에러 세분화, 테스트 작성
     @PostMapping("/login/token")
     public ResponseEntity<TokenResponse> login(@RequestBody TokenRequest request) {
         TokenResponse token = authService.login(request);

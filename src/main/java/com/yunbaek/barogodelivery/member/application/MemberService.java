@@ -4,6 +4,7 @@ import com.yunbaek.barogodelivery.common.exception.DuplicateDataException;
 import com.yunbaek.barogodelivery.member.domain.LoginId;
 import com.yunbaek.barogodelivery.member.domain.Member;
 import com.yunbaek.barogodelivery.member.domain.MemberRepository;
+import com.yunbaek.barogodelivery.member.domain.PasswordValidator;
 import com.yunbaek.barogodelivery.member.dto.MemberRequest;
 import com.yunbaek.barogodelivery.member.dto.MemberResponse;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -25,9 +26,14 @@ public class MemberService {
 	@Transactional
 	public MemberResponse createMember(MemberRequest request) {
 		validateDuplicateLoginId(loginId(request));
-		request.encodePassword(passwordEncoder);
+		encodeRawPassword(request);
 		Member member = memberRepository.save(request.toMember());
 		return MemberResponse.from(member);
+	}
+
+	private void encodeRawPassword(MemberRequest request) {
+		PasswordValidator.validate(request.getPassword());
+		request.encodePassword(passwordEncoder);
 	}
 
 	private LoginId loginId(MemberRequest request) {

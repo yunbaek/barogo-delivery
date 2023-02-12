@@ -4,8 +4,10 @@ import com.yunbaek.barogodelivery.auth.domain.LoginMember;
 import com.yunbaek.barogodelivery.delivery.application.DeliveryService;
 import com.yunbaek.barogodelivery.delivery.dto.DeliveryResponse;
 import com.yunbaek.barogodelivery.delivery.dto.DeliverySearchDto;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -30,11 +32,17 @@ public class DeliveryController {
      *                  - size : 조회할 데이터 수(기본값 10)
      */
     @GetMapping("/deliveries")
-    public void findDeliveryByMemberId(
+    public ResponseEntity<List<DeliveryResponse>> findDeliveryByMemberId(
             @AuthenticationPrincipal(expression = "loginMember") LoginMember loginMember,
             DeliverySearchDto searchDto) {
-        List<DeliveryResponse> deliveryByMemberId = deliveryService.findDeliveryByMemberId(searchDto);
-        System.out.println("deliveryByMemberId = " + deliveryByMemberId);
+        List<DeliveryResponse> deliveryByMemberId = deliveryService.findDeliveryByMemberId(loginMember.id(), searchDto);
+        return ResponseEntity.ok(deliveryByMemberId);
+    }
+
+    @PostMapping("/deliveries")
+    public void createDelivery() {
+        deliveryService.createDeliveries();
+        System.out.println("createDelivery");
     }
 
 }

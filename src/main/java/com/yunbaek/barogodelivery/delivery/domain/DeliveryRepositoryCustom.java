@@ -7,6 +7,6 @@ import java.util.List;
 
 public interface DeliveryRepositoryCustom {
 
-    List<DeliveryResponse> findByMemberId(DeliverySearchDto searchDto);
+    List<DeliveryResponse> findByMemberId(long memberId, DeliverySearchDto searchDto);
 
 }

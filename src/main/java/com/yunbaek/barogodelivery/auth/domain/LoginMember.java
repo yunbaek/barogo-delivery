@@ -24,6 +24,10 @@ public class LoginMember {
 		return new LoginMember(member.id(), member.loginId(), member.name());
 	}
 
+	public long id() {
+		return id;
+	}
+
 	public String loginId() {
 		return loginId.value();
 	}

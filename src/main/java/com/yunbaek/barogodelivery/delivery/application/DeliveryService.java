@@ -16,7 +16,7 @@ import java.util.List;
 public class DeliveryService {
 
     private static final String INVALID_SEARCH_DATE_ERROR_MESSAGE = "검색 기간은 3일 이내로 설정해주세요.";
-    private static final int MAXIMUM_SEARCH_DATE_PERIOD = 3;
+    private static final int MAXIMUM_SEARCH_DATE_PERIOD = 2; // 오늘 포함 차이이므로 Period 는 2일 이내
     private final DeliveryRepository deliveryRepository;
 
     public DeliveryService(DeliveryRepository deliveryRepository) {

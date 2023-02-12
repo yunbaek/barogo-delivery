@@ -1,0 +1,19 @@
+ifndef::snippets[]
+:snippets: ./build/generated-snippets
+endif::[]
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 4
+
+== Delivery
+=== 배달 조회
+==== Request
+include::{snippets}/delivery/http-request.adoc[]
+==== Response
+include::{snippets}/delivery/http-response.adoc[]
+==== Request Fields
+include::{snippets}/delivery/request-parameters.adoc[]
+==== Response Fields
+include::{snippets}/delivery/response-fields.adoc[]

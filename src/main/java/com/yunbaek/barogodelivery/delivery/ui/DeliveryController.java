@@ -31,7 +31,7 @@ public class DeliveryController {
      *                  - lastDate : 검색 마지막 날짜
      *                  - size : 조회할 데이터 수(기본값 10)
      */
-    @GetMapping("/deliveries")
+    @GetMapping("api/v1/deliveries")
     public ResponseEntity<List<DeliveryResponse>> findDeliveryByMemberId(
             @AuthenticationPrincipal(expression = "loginMember") LoginMember loginMember,
             DeliverySearchDto searchDto) {

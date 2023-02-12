@@ -30,8 +30,10 @@ public class DeliveryRepositoryImpl implements DeliveryRepositoryCustom {
                         ltDeliveryId(searchDto.getLastDeliveryId()),
                         delivery.memberId.eq(memberId),
                         delivery.createdDate.between(startOfToday, LocalDateTime.now())
-                );
-
+                )
+                .orderBy(delivery.id.desc())
+                .limit(searchDto.getSize());
+        
         return query.select(Projections.constructor(DeliveryResponse.class,
                 delivery.id.as("deliveryId"),
                 delivery.memberId,

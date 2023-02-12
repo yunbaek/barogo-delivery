@@ -1,6 +1,7 @@
 package com.yunbaek.barogodelivery.delivery.dto;
 
 import com.yunbaek.barogodelivery.delivery.domain.DeliveryStatus;
+import lombok.Builder;
 import lombok.Getter;
 
 @Getter
@@ -13,6 +14,7 @@ public class DeliveryResponse {
     private String arrivalAddress;
     private String departureAddress;
 
+    @Builder
     public DeliveryResponse(
             long deliveryId,
             long memberId,

@@ -59,7 +59,14 @@ public class Delivery extends BaseEntity {
         this.status = status;
     }
 
-    public boolean enableUpdate() {
+
+    public void updateDepartureAddress(Address newDepartureAddress) {
+        Assert.notNull(newDepartureAddress, "DepartureAddress must not be null");
+        this.departureAddress = newDepartureAddress;
+    }
+
+
+    public boolean enableUpdateStatus() {
         return status.isBeforeDelivering();
     }
 

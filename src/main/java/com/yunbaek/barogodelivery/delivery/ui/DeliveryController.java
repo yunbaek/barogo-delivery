@@ -4,11 +4,10 @@ import com.yunbaek.barogodelivery.auth.domain.LoginMember;
 import com.yunbaek.barogodelivery.delivery.application.DeliveryService;
 import com.yunbaek.barogodelivery.delivery.dto.DeliveryResponse;
 import com.yunbaek.barogodelivery.delivery.dto.DeliverySearchDto;
+import com.yunbaek.barogodelivery.delivery.dto.DeliveryUpdateRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -22,7 +21,6 @@ public class DeliveryController {
     }
 
     /**
-     *
      * 배송 조회 api (no-offset 페이징 처리)
      *
      * @param searchDto - 검색 조건
@@ -37,6 +35,15 @@ public class DeliveryController {
             DeliverySearchDto searchDto) {
         List<DeliveryResponse> deliveryByMemberId = deliveryService.findDeliveryByMemberId(loginMember.id(), searchDto);
         return ResponseEntity.ok(deliveryByMemberId);
+    }
+
+    @PutMapping("/api/v1/deliveries/{deliveryId}")
+    public void updateDelivery(
+            @AuthenticationPrincipal(expression = "loginMember") LoginMember loginMember,
+            @PathVariable Long deliveryId,
+            @RequestBody DeliveryUpdateRequest request
+    ) {
+        deliveryService.updateDelivery(loginMember.id(), deliveryId, request);
     }
 
     @PostMapping("/deliveries")

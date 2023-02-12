@@ -60,7 +60,7 @@ class DeliveryTest {
                 도착지_주소
         );
 
-        assertThat(delivery.enableUpdate()).isTrue();
+        assertThat(delivery.enableUpdateStatus()).isTrue();
     }
 
     @Test
@@ -93,7 +93,7 @@ class DeliveryTest {
 
         delivery.updateStatus(status);
 
-        assertThat(delivery.enableUpdate()).isFalse();
+        assertThat(delivery.enableUpdateStatus()).isFalse();
     }
 
     static DeliveryStatus[] updateDeliveryStatusFailTest() {

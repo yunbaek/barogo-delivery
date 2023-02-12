@@ -1,9 +1,13 @@
 package com.yunbaek.barogodelivery.delivery.ui;
 
 import com.yunbaek.barogodelivery.delivery.TestUserDetailsService;
+import com.yunbaek.barogodelivery.delivery.domain.Address;
+import com.yunbaek.barogodelivery.delivery.domain.Delivery;
+import com.yunbaek.barogodelivery.delivery.domain.DeliveryRepository;
 import com.yunbaek.barogodelivery.delivery.domain.DeliveryStatus;
 import com.yunbaek.barogodelivery.delivery.dto.DeliveryResponse;
 import com.yunbaek.barogodelivery.delivery.dto.DeliverySearchDto;
+import com.yunbaek.barogodelivery.delivery.dto.DeliveryUpdateRequest;
 import com.yunbaek.barogodelivery.utils.ControllerTest;
 import com.yunbaek.barogodelivery.utils.RestAssertUtils;
 import org.junit.jupiter.api.BeforeEach;
@@ -13,6 +17,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
@@ -26,10 +31,10 @@ import org.springframework.web.filter.CharacterEncodingFilter;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
@@ -41,6 +46,7 @@ import static org.springframework.restdocs.request.RequestDocumentation.requestP
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -48,10 +54,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Nested
 @WebMvcTest(controllers = DeliveryController.class)
 @ExtendWith({RestDocumentationExtension.class})
-
 class DeliveryControllerTest extends ControllerTest {
 
     private static final String DELIVERIES_URI = "/api/v1/deliveries/";
+
+    @MockBean
+    private DeliveryRepository deliveryRepository;
 
     @Autowired
     protected MockMvc mockMvc;
@@ -129,6 +137,63 @@ class DeliveryControllerTest extends ControllerTest {
         String result = RestAssertUtils.extractResponse(perform);
         assertThat(result).isNotBlank();
 
+        // docs
+        createDeliveryListDocs(perform);
+    }
+
+    @DisplayName("배달 도착 주소를 변경할 수 있다.")
+    @Test
+    void updateDepartureAddressTest() throws Exception {
+        // given
+        given(deliveryRepository.findByIdAndMemberId(anyLong(), eq(1L)))
+                .willReturn(
+                        Optional.of(Delivery.of(
+                                1L,
+                                1L,
+                                1L,
+                                Address.of(
+                                        "12345",
+                                        "서울시",
+                                        "강남구",
+                                        "역삼동",
+                                        "0길 123-45"
+                                ),
+                                Address.of(
+
+                                        "12345",
+                                        "서울시",
+                                        "강남구",
+                                        "역삼동",
+                                        "5길 123-45"
+                                )
+                        )));
+
+        UserDetails test = testUserDetailsService.loadUserByUsername("Test");
+        DeliveryUpdateRequest request = DeliveryUpdateRequest.builder()
+                .zipCode("54321")
+                .state("서울시")
+                .city("송파구")
+                .street("잠실동")
+                .detail("123길 45-67")
+                .build();
+
+        // when
+        ResultActions perform = mockMvc.perform(put(DELIVERIES_URI + "/1")
+                        .with(user(test))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .content(RestAssertUtils.mapAsString(request)))
+                .andDo(print());
+
+        // then
+        perform.andExpect(status().isOk());
+        String result = RestAssertUtils.extractResponse(perform);
+        assertThat(result).isNotBlank();
+
+        // docs
+    }
+
+    private static void createDeliveryListDocs(ResultActions perform) throws Exception {
         perform.andDo(document("delivery",
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint()),

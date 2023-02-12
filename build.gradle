@@ -3,6 +3,8 @@ plugins {
     id 'org.springframework.boot' version '2.7.9-SNAPSHOT'
     id 'io.spring.dependency-management' version '1.0.15.RELEASE'
     id "org.asciidoctor.jvm.convert" version '3.3.2'
+    id 'com.ewerk.gradle.plugins.querydsl' version '1.0.10'
+
 }
 
 group = 'com.yunbaek'
@@ -35,21 +37,34 @@ bootJar {
 }
 
 dependencies {
+    // spring
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-    implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-web'
 
     // jwt
     implementation 'io.jsonwebtoken:jjwt:0.9.1'
 
+    // lombok
     compileOnly 'org.projectlombok:lombok'
-    runtimeOnly 'com.h2database:h2'
-    runtimeOnly 'com.mysql:mysql-connector-j'
     annotationProcessor 'org.projectlombok:lombok'
 
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    // database
+    runtimeOnly 'com.h2database:h2'
+    runtimeOnly 'com.mysql:mysql-connector-j'
+
+    // querydsl
+    implementation "com.querydsl:querydsl-jpa:5.0.0"
+    implementation "com.querydsl:querydsl-apt:5.0.0"
+
+    // security
+    implementation 'org.springframework.boot:spring-boot-starter-security'
     testImplementation 'org.springframework.security:spring-security-test'
+
+    // restdocs
     testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
+
+    // test
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 
 test {
@@ -57,6 +72,7 @@ test {
     outputs.dir snippetsDir
 }
 
+// set for asciidoctor
 asciidoctor {
     inputs.dir snippetsDir
     dependsOn test
@@ -75,3 +91,24 @@ tasks.register('copyDocument', Copy) {
 build {
     dependsOn copyDocument
 }
+
+// set for querydsl
+def querydslDir = "$buildDir/generated/querydsl"
+
+querydsl {
+    jpa = true
+    querydslSourcesDir = querydslDir
+}
+sourceSets {
+    main.java.srcDir querydslDir
+}
+compileQuerydsl {
+    options.annotationProcessorPath = configurations.querydsl
+}
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+    querydsl.extendsFrom compileClasspath
+}
+
